@@ -7,4 +7,4 @@ app.get("/", (req, res) => {
 
 app.listen(3002, () => {
     console.log("Login service on port 3002");
-});
+});// test log
