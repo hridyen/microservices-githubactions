@@ -15,13 +15,16 @@ jobs:
       config: ${{ steps.filter.outputs.config }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout code (FULL HISTORY)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 🔥 IMPORTANT FIX
 
       - name: Detect changed paths
         uses: dorny/paths-filter@v3
         id: filter
         with:
+          base: main       # 🔥 IMPORTANT FIX
           filters: |
             auth:
               - 'auth/**'
@@ -29,6 +32,12 @@ jobs:
               - 'login/**'
             config:
               - 'config/**'
+
+      - name: Debug Outputs (optional but useful)
+        run: |
+          echo "Auth changed: ${{ steps.filter.outputs.auth }}"
+          echo "Login changed: ${{ steps.filter.outputs.login }}"
+          echo "Config changed: ${{ steps.filter.outputs.config }}"
 
 
   auth-service:
@@ -48,6 +57,9 @@ jobs:
         run: |
           docker run -d -p 3001:3000 auth-service
 
+      - name: Verify Container
+        run: docker ps
+
 
   login-service:
     needs: detect-changes
@@ -66,6 +78,9 @@ jobs:
         run: |
           docker run -d -p 3002:3000 login-service
 
+      - name: Verify Container
+        run: docker ps
+
 
   config-service:
     needs: detect-changes
@@ -83,3 +98,6 @@ jobs:
       - name: Run Config Container
         run: |
           docker run -d -p 3003:3000 config-service
+
+      - name: Verify Container
+        run: docker ps
