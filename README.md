@@ -101,7 +101,18 @@ Access the service locally at: `http://localhost:3001` (Ensure port mappings mat
 | `feature/*` | Isolated context for developing independent features or tasks. |
 
 ## 📊 Screenshots / Output
-*(Add screenshots showing pipeline execution views, job-level logs, and Docker build outputs here)*
+
+### Full Pipeline Workflow Execution
+![Workflow View](screenshots/workflow%20view.png)
+
+### Auth Service Build Example
+![Auth Service Execution](screenshots/auth%20%20service.png)
+
+### Login Service Build Example
+![Login Service Execution](screenshots/login%20service.png)
+
+### Config Service Build Example
+![Config Change Execution](screenshots/config%20change.png)
 
 ## 💡 Learnings & Optimizations
 
