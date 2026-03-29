@@ -7,4 +7,4 @@ app.get("/", (req, res) => {
 
 app.listen(3001, () => {
     console.log("Config service on port 3001");
-});
+});// testing config
