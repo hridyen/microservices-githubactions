@@ -1,0 +1,85 @@
+name: Monorepo Smart Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      auth: ${{ steps.filter.outputs.auth }}
+      login: ${{ steps.filter.outputs.login }}
+      config: ${{ steps.filter.outputs.config }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            auth:
+              - 'auth/**'
+            login:
+              - 'login/**'
+            config:
+              - 'config/**'
+
+
+  auth-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.auth == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Auth Image
+        run: |
+          cd auth
+          docker build -t auth-service .
+
+      - name: Run Auth Container
+        run: |
+          docker run -d -p 3001:3000 auth-service
+
+
+  login-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.login == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Login Image
+        run: |
+          cd login
+          docker build -t login-service .
+
+      - name: Run Login Container
+        run: |
+          docker run -d -p 3002:3000 login-service
+
+
+  config-service:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.config == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Config Image
+        run: |
+          cd config
+          docker build -t config-service .
+
+      - name: Run Config Container
+        run: |
+          docker run -d -p 3003:3000 config-service
